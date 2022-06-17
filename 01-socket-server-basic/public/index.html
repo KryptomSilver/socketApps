@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Minichat</title>
+    <!-- CSS only -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body class="container">
+    <h1 class="mt-5">MiniChat</h1>
+    <hr />
+    <form action="" id="miFormulario">
+      <div class="row">
+        <div class="col-8">
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Mensaje"
+            id="mensaje"
+          />
+        </div>
+        <div class="col-4">
+          <button class="btn btn-primary" type="submit">Enviar</button>
+        </div>
+      </div>
+    </form>
+    <div class="row">
+      <div class="col">
+        <ul id="misMensajes"></ul>
+      </div>
+    </div>
+  </body>
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.1/socket.io.js"
+    integrity="sha512-9mpsATI0KClwt+xVZfbcf2lJ8IFBAwsubJ6mI3rtULwyM3fBmQFzj0It4tGqxLOGQwGfJdk/G+fANnxfq9/cew=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  ></script>
+  <script>
+    const socket = io("http://localhost:8080");
+    //Referencias al HTML
+    const form = document.querySelector("#miFormulario");
+    const mensajes = document.querySelector("#misMensajes");
+    const texto = document.querySelector("#mensaje");
+    //Submit formulario
+    form.addEventListener("submit", (ev) => {
+      ev.preventDefault();
+      const nuevoMensaje = texto.value;
+      //Enviar mensaje por un socket
+      socket.emit("mensaje-to-server", { texto: nuevoMensaje });
+      //Vaciar input
+      texto.value = "";
+    });
+    //Recivir un mensaje por un socket e imprimirlo en el html
+    socket.on("mensaje-from-server", (data) => {
+      mensajes.innerHTML += `<li>${data.texto}</li>`;
+    });
+  </script>
+</html>
